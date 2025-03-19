@@ -18,10 +18,13 @@ type Task = {
 let tasks: Task[] = [];
 let idCounter = 1;
 
+// Helper function to find task by ID
+const findTaskById = (id: number): Task | undefined => tasks.find(t => t.id === id);
+
 // Get all tasks, sorted by status and priority
-app.get('/tasks', (req: Request, res: Response) => {
+app.get('/tasks', (_req: Request, res: Response) => {
     const priorityOrder = { 'Low': 1, 'Medium': 2, 'High': 3 };
-    const sortedTasks = tasks.sort((a, b) => {
+    const sortedTasks = [...tasks].sort((a, b) => {
         if (a.status === b.status) {
             return priorityOrder[b.priority] - priorityOrder[a.priority]; // Higher priority first
         }
@@ -32,9 +35,8 @@ app.get('/tasks', (req: Request, res: Response) => {
 
 // Get a single task by ID
 app.get('/tasks/:id', (req: Request, res: Response) => {
-    const task = tasks.find(t => t.id === parseInt(req.params.id));
-    if (!task) return res.status(404).json({ message: 'Task not found' });
-    res.json(task);
+    const task = findTaskById(parseInt(req.params.id));
+    task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
 });
 
 // Search task by title
@@ -53,24 +55,25 @@ app.post('/tasks', (req: Request, res: Response) => {
 
 // Update a task by ID
 app.put('/tasks/:id', (req: Request, res: Response) => {
-    const task = tasks.find(t => t.id === parseInt(req.params.id));
+    const task = findTaskById(parseInt(req.params.id));
     if (!task) return res.status(404).json({ message: 'Task not found' });
     
     const { title, status, priority, recurrence, dependency } = req.body;
     
-    if (title !== undefined) task.title = title;
-    if (status !== undefined && (status === 'done' || status === 'not done')) {
+    if (title) task.title = title;
+    if (priority) task.priority = priority;
+    if (recurrence) task.recurrence = recurrence;
+    if (dependency) task.dependency = dependency;
+    
+    if (status) {
         if (task.dependency) {
-            const dependentTask = tasks.find(t => t.id === task.dependency);
+            const dependentTask = findTaskById(task.dependency);
             if (dependentTask && dependentTask.status !== 'done') {
                 return res.status(400).json({ message: `Task ${task.dependency} must be completed first.` });
             }
         }
         task.status = status;
     }
-    if (priority !== undefined) task.priority = priority;
-    if (recurrence !== undefined) task.recurrence = recurrence;
-    if (dependency !== undefined) task.dependency = dependency;
     
     res.json(task);
 });
@@ -85,28 +88,20 @@ app.delete('/tasks/:id', (req: Request, res: Response) => {
 });
 
 // Function to handle recurring tasks
-function handleRecurringTasks() {
+const handleRecurringTasks = (): void => {
     const now = new Date();
+    const recurrenceRules: Record<string, boolean> = {
+        daily: true,
+        weekly: now.getDay() === 0, // Recur every Sunday
+        monthly: now.getDate() === 1 // Recur on the 1st of every month
+    };
+    
     tasks.forEach(task => {
-        if (task.recurrence) {
-            let shouldRecur = false;
-            switch (task.recurrence) {
-                case 'daily':
-                    shouldRecur = true;
-                    break;
-                case 'weekly':
-                    shouldRecur = now.getDay() === 0; // Recur every Sunday
-                    break;
-                case 'monthly':
-                    shouldRecur = now.getDate() === 1; // Recur on the 1st of every month
-                    break;
-            }
-            if (shouldRecur) {
-                tasks.push({ id: idCounter++, title: task.title, status: 'not done', priority: task.priority, recurrence: task.recurrence, dependency: task.dependency });
-            }
+        if (task.recurrence && recurrenceRules[task.recurrence]) {
+            tasks.push({ id: idCounter++, title: task.title, status: 'not done', priority: task.priority, recurrence: task.recurrence, dependency: task.dependency });
         }
     });
-}
+};
 
 // Run recurring task handler every day at midnight
 setInterval(handleRecurringTasks, 24 * 60 * 60 * 1000);
