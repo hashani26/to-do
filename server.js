@@ -5,40 +5,38 @@ const port = 3001;
 // Middleware to parse JSON requests
 app.use(express.json());
 
-let tasks = [
-    {
-        "title": "task 1",
-        "status": "To do",
-        "priority": "high"
-    },
-    {
-        "title": "task 2",
-        "status": "In progress",
-        "priority": "medium"
-    },
-    {
-        "title": "task 3",
-        "status": "done",
-        "priority": "low"
-    }
-];
+let tasks = [];
 let idCounter = 1;
 
 // Get all tasks, sorted by status and priority
 app.get('/tasks', (req, res) => {
+    const priorityOrder = { 'Low': 1, 'Medium': 2, 'High': 3 };
     const sortedTasks = tasks.sort((a, b) => {
-        if (a.completed === b.completed) {
-            return b.priority - a.priority; // Higher priority first
+        if (a.status === b.status) {
+            return priorityOrder[b.priority] - priorityOrder[a.priority]; // Higher priority first
         }
-        return a.completed - b.completed; // Incomplete tasks first
+        return a.status === 'not done' ? -1 : 1; // 'not done' first
     });
     res.json(sortedTasks);
 });
 
+// Get a single task by ID
+app.get('/tasks/:id', (req, res) => {
+    const task = tasks.find(t => t.id === parseInt(req.params.id));
+    if (!task) return res.status(404).json({ message: 'Task not found' });
+    res.json(task);
+});
+
+// Search task by title
+app.get('/tasks/search/:title', (req, res) => {
+    const filteredTasks = tasks.filter(t => t.title.toLowerCase().includes(req.params.title.toLowerCase()));
+    res.json(filteredTasks);
+});
+
 // Create a new task
 app.post('/tasks', (req, res) => {
-    const { title, completed = false, priority = 1 } = req.body;
-    const newTask = { id: idCounter++, title, completed, priority };
+    const { title, status = 'not done', priority = 'Medium' } = req.body;
+    const newTask = { id: idCounter++, title, status, priority };
     tasks.push(newTask);
     res.status(201).json(newTask);
 });
@@ -48,14 +46,13 @@ app.put('/tasks/:id', (req, res) => {
     const task = tasks.find(t => t.id === parseInt(req.params.id));
     if (!task) return res.status(404).json({ message: 'Task not found' });
     
-    const { title, completed, priority } = req.body;
+    const { title, status, priority } = req.body;
     if (title !== undefined) task.title = title;
-    if (completed !== undefined) task.completed = completed;
+    if (status !== undefined && (status === 'done' || status === 'not done')) task.status = status;
     if (priority !== undefined) task.priority = priority;
     
     res.json(task);
 });
-
 
 // Delete a task by ID
 app.delete('/tasks/:id', (req, res) => {
@@ -64,32 +61,6 @@ app.delete('/tasks/:id', (req, res) => {
     
     tasks.splice(index, 1);
     res.json({ message: 'Task deleted successfully' });
-});
-
-// Get a single task by ID
-// app.get('/tasks/:id', (req, res) => {
-//     const task = tasks.find(t => t.id === parseInt(req.params.id));
-//     if (!task) return res.status(404).json({ message: 'Task not found' });
-//     res.json(task);
-// });
-
-// Search task by title
-//not found??
-app.get('/tasks/search/:title', (req, res) => {
-    const filteredTasks = tasks.filter(t => t.title.toLowerCase().includes(req.params.title.toLowerCase()));
-    res.json(filteredTasks);
-});
-
-
-
-app.get('/tasks', (req, res) => {
-    const sortedTasks = tasks.sort((a, b) => {
-        if (a.completed === b.completed) {
-            return b.priority - a.priority; // Higher priority first
-        }
-        return a.completed - b.completed; // Incomplete tasks first
-    });
-    res.json(sortedTasks);
 });
 
 // Start server
