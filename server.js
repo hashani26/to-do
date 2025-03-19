@@ -35,8 +35,8 @@ app.get('/tasks/search/:title', (req, res) => {
 
 // Create a new task
 app.post('/tasks', (req, res) => {
-    const { title, status = 'not done', priority = 'Medium', recurrence } = req.body;
-    const newTask = { id: idCounter++, title, status, priority, recurrence };
+    const { title, status = 'not done', priority = 'Medium', recurrence, dependency } = req.body;
+    const newTask = { id: idCounter++, title, status, priority, recurrence, dependency };
     tasks.push(newTask);
     res.status(201).json(newTask);
 });
@@ -46,11 +46,21 @@ app.put('/tasks/:id', (req, res) => {
     const task = tasks.find(t => t.id === parseInt(req.params.id));
     if (!task) return res.status(404).json({ message: 'Task not found' });
     
-    const { title, status, priority, recurrence } = req.body;
+    const { title, status, priority, recurrence, dependency } = req.body;
+    
     if (title !== undefined) task.title = title;
-    if (status !== undefined && (status === 'done' || status === 'not done')) task.status = status;
+    if (status !== undefined && (status === 'done' || status === 'not done')) {
+        if (task.dependency) {
+            const dependentTask = tasks.find(t => t.id === task.dependency);
+            if (dependentTask && dependentTask.status !== 'done') {
+                return res.status(400).json({ message: `Task ${task.dependency} must be completed first.` });
+            }
+        }
+        task.status = status;
+    }
     if (priority !== undefined) task.priority = priority;
     if (recurrence !== undefined) task.recurrence = recurrence;
+    if (dependency !== undefined) task.dependency = dependency;
     
     res.json(task);
 });
@@ -82,7 +92,7 @@ function handleRecurringTasks() {
                     break;
             }
             if (shouldRecur) {
-                tasks.push({ id: idCounter++, title: task.title, status: 'not done', priority: task.priority, recurrence: task.recurrence });
+                tasks.push({ id: idCounter++, title: task.title, status: 'not done', priority: task.priority, recurrence: task.recurrence, dependency: task.dependency });
             }
         }
     });
