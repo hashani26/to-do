@@ -56,6 +56,16 @@ app.put('/tasks/:id', (req, res) => {
     res.json(task);
 });
 
+
+// Delete a task by ID
+app.delete('/tasks/:id', (req, res) => {
+    const index = tasks.findIndex(t => t.id === parseInt(req.params.id));
+    if (index === -1) return res.status(404).json({ message: 'Task not found' });
+    
+    tasks.splice(index, 1);
+    res.json({ message: 'Task deleted successfully' });
+});
+
 // Get a single task by ID
 // app.get('/tasks/:id', (req, res) => {
 //     const task = tasks.find(t => t.id === parseInt(req.params.id));
@@ -72,13 +82,14 @@ app.get('/tasks/search/:title', (req, res) => {
 
 
 
-// Delete a task by ID
-app.delete('/tasks/:id', (req, res) => {
-    const index = tasks.findIndex(t => t.id === parseInt(req.params.id));
-    if (index === -1) return res.status(404).json({ message: 'Task not found' });
-    
-    tasks.splice(index, 1);
-    res.json({ message: 'Task deleted successfully' });
+app.get('/tasks', (req, res) => {
+    const sortedTasks = tasks.sort((a, b) => {
+        if (a.completed === b.completed) {
+            return b.priority - a.priority; // Higher priority first
+        }
+        return a.completed - b.completed; // Incomplete tasks first
+    });
+    res.json(sortedTasks);
 });
 
 // Start server
