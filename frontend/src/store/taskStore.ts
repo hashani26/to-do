@@ -46,7 +46,6 @@ export const useTaskStore = create<TaskState>((set) => ({
   },
 
   addTask: async (task) => {
-    console.log('🚀 ~ addTask: ~ task:', task);
     try {
       const response = await fetch('http://localhost:3001/tasks', {
         headers: { 'Content-Type': 'application/json' },
@@ -70,7 +69,13 @@ export const useTaskStore = create<TaskState>((set) => ({
         method: 'PUT',
         body: JSON.stringify({ id, status: 'done' }),
       });
-      if (!response.ok) throw new Error('Failed to update task');
+      if (!response.ok) {
+        if (response.status === 400) {
+          const errorMsg = await response.json();
+          alert(errorMsg.message);
+        }
+        throw new Error('Failed to update task');
+      }
       const data: Task = await response.json();
 
       set((state) => ({
@@ -87,11 +92,9 @@ export const useTaskStore = create<TaskState>((set) => ({
       const response = await fetch(`http://localhost:3001/tasks/${id}`, {
         headers: { 'Content-Type': 'application/json' },
         method: 'DELETE',
-        // body: JSON.stringify({ id, status: 'done' }),
-      })
+      });
 
-      if(!response.ok) throw new Error('Failed to delete task')
-      // const data = await response.json()
+      if (!response.ok) throw new Error('Failed to delete task');
       set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }));
     } catch (error) {
       console.error('Error deleting task', error);

@@ -3,7 +3,6 @@ import { useTaskStore } from '../store/taskStore';
 
 const TaskForm = () => {
   const { addTask, tasks } = useTaskStore();
-  console.log('🚀 ~ TaskForm ~ tasks:', tasks);
   //check add task
 
   const [title, setTitle] = useState('');

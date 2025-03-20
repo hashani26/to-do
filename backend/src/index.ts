@@ -96,7 +96,7 @@ app.put('/tasks/:id', (req: Request, res: Response) => {
       const dependentTask = findTaskById(task.dependency);
       if (dependentTask && dependentTask.status !== 'done') {
         res.status(400).json({
-          message: `Task ${task.dependency} must be completed first.`,
+          message: `${dependentTask.title} must be completed first.`,
         });
         return;
       }
