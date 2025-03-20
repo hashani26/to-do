@@ -1,11 +1,17 @@
 import express from 'express';
+import cors from 'cors';
 const app = express();
 const port = 3001;
+app.use(cors({
+    origin: true, //remove for production
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'PUT', 'POST', 'DELETE']
+}));
 // Middleware to parse JSON requests
 app.use(express.json());
 let tasks = [];
 let idCounter = 1;
-// Helper function to find task by ID
+//function to find task by ID
 const findTaskById = (id) => tasks.find((t) => t.id === id);
 // Get all tasks, sorted by status and priority
 app.get('/tasks', (_req, res) => {
@@ -18,29 +24,6 @@ app.get('/tasks', (_req, res) => {
     });
     res.json(sortedTasks);
 });
-// Get a single task by ID
-app.get('/tasks/:id', (req, res) => {
-    const task = findTaskById(parseInt(req.params.id));
-    task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
-});
-// Search task by title
-app.get('/tasks/search/:title', (req, res) => {
-    const filteredTasks = tasks.filter((t) => t.title.toLowerCase().includes(req.params.title.toLowerCase()));
-    res.json(filteredTasks);
-});
-// // Filter tasks by status and priority using query parameters
-// app.get('/tasks', (req: Request, res: Response) => {
-//     const { status, priority } = req.query;
-//     console.log("🚀 ~ app.get ~ status:", status)
-//     let filteredTasks = tasks;
-//     if (status && ['done', 'not done'].includes(status as string)) {
-//         filteredTasks = filteredTasks.filter(task => task.status === status);
-//     }
-//     if (priority && ['Low', 'Medium', 'High'].includes(priority as string)) {
-//         filteredTasks = filteredTasks.filter(task => task.priority === priority);
-//     }
-//     res.json(filteredTasks);
-// });
 // Create a new task
 app.post('/tasks', (req, res) => {
     const { title, status = 'not done', priority = 'Medium', recurrence, dependency, } = req.body;
@@ -54,6 +37,16 @@ app.post('/tasks', (req, res) => {
     };
     tasks.push(newTask);
     res.status(201).json(newTask);
+});
+// Delete a task by ID
+app.delete('/tasks/:id', (req, res) => {
+    const index = tasks.findIndex((t) => t.id === parseInt(req.params.id));
+    if (index === -1) {
+        res.status(404).json({ message: 'Task not found' });
+        return;
+    }
+    tasks.splice(index, 1);
+    res.json({ message: 'Task deleted successfully' });
 });
 // Update a task by ID
 app.put('/tasks/:id', (req, res) => {
@@ -85,16 +78,29 @@ app.put('/tasks/:id', (req, res) => {
     }
     res.json(task);
 });
-// Delete a task by ID
-app.delete('/tasks/:id', (req, res) => {
-    const index = tasks.findIndex((t) => t.id === parseInt(req.params.id));
-    if (index === -1) {
-        res.status(404).json({ message: 'Task not found' });
-        return;
-    }
-    tasks.splice(index, 1);
-    res.json({ message: 'Task deleted successfully' });
+// // Get a single task by ID
+// app.get('/tasks/:id', (req: Request, res: Response) => {
+//   const task = findTaskById(parseInt(req.params.id));
+//   task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
+// });
+// Search task by title
+app.get('/tasks/search/:title', (req, res) => {
+    const filteredTasks = tasks.filter((t) => t.title.toLowerCase().includes(req.params.title.toLowerCase()));
+    res.json(filteredTasks);
 });
+// // Filter tasks by status and priority using query parameters
+// app.get('/tasks', (req: Request, res: Response) => {
+//     const { status, priority } = req.query;
+//     console.log("🚀 ~ app.get ~ status:", status)
+//     let filteredTasks = tasks;
+//     if (status && ['done', 'not done'].includes(status as string)) {
+//         filteredTasks = filteredTasks.filter(task => task.status === status);
+//     }
+//     if (priority && ['Low', 'Medium', 'High'].includes(priority as string)) {
+//         filteredTasks = filteredTasks.filter(task => task.priority === priority);
+//     }
+//     res.json(filteredTasks);
+// });
 // Function to handle recurring tasks
 const handleRecurringTasks = () => {
     const now = new Date();
@@ -120,5 +126,5 @@ const handleRecurringTasks = () => {
 setInterval(handleRecurringTasks, 24 * 60 * 60 * 1000);
 // Start server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`cors Server running at http://localhost:${port}`);
 });

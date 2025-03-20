@@ -1,7 +1,16 @@
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 
 const app = express();
 const port = 3001;
+
+app.use(
+  cors({
+    origin: true, //remove for production
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'PUT', 'POST', 'DELETE']
+  })
+);
 
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -157,5 +166,5 @@ setInterval(handleRecurringTasks, 24 * 60 * 60 * 1000);
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`cors Server running at http://localhost:${port}`);
 });
