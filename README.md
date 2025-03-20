@@ -5,3 +5,5 @@
 4. open a separate terminal
 5. run commands `cd frontend`, `npm i`, `npm run dev`
 6. open a browser window and go to `http://localhost:5173/` to access the UI
+
+![UI Design](./assets/to%20do%20UI%20design.png?raw=true "UI Design")
