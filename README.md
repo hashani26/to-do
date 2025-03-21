@@ -7,3 +7,22 @@
 6. open a browser window and go to `http://localhost:5173/` to access the UI
 
 ![UI Design](./assets/to%20do%20UI%20design.png?raw=true "UI Design")
+
+
+# Frontend
+
+## Tech Stack
+ReactJs
+
+
+    1. TypeScript
+
+    Enable static type checking for maintain quality in development.
+
+    2. Zustand
+
+    Lightweight state management tool as the application is comparatively small and contains a few reusable sateful components.
+
+    
+
+     

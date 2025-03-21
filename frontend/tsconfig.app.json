@@ -22,5 +22,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "./jest.setup.ts"],
+  "presets": [
+    ["@babel/preset-env", { "targets": { "esmodules": true } }], // It's the name of the lib you installed
+    ["@babel/preset-react", { "runtime": "automatic" }], // It's the name of the lib you installed
+    "@babel/preset-typescript" // It's the name of the lib you installed
+  ]
 }
