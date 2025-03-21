@@ -168,3 +168,5 @@ setInterval(handleRecurringTasks, 24 * 60 * 60 * 1000);
 app.listen(port, () => {
   console.log(`cors Server running at http://localhost:${port}`);
 });
+
+export default app
