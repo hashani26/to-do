@@ -6,12 +6,21 @@
 5. run commands `cd frontend`, `npm i`, `npm run dev`
 6. open a browser window and go to `http://localhost:5173/` to access the UI
 
-![UI Design](./assets/to%20do%20UI%20design.png?raw=true "UI Design")
+# UI Design
+
+<img src="assets/to do UI design.png" width="500">
+
+<br/>
+
+# API Documentation
+
+## [Postman Collection](https://documenter.getpostman.com/view/4964647/2sAYkHnHSY)
+<br/>
 
 
 # Frontend
 
-## Tech Stack
+### Tech Stack
 ReactJs
 
 
