@@ -1,15 +1,16 @@
-import { useState } from 'react';
-import { useTaskStore } from '../store/taskStore';
+import { useState } from "react";
+import { useTaskStore } from "../store/taskStore";
+import LoadingIcon from "./LoadingIcon";
 
 const TaskForm = () => {
-  const { addTask, tasks } = useTaskStore();
+  const { addTask, tasks, loading } = useTaskStore();
 
-  const [title, setTitle] = useState('');
-  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>('Low');
+  const [title, setTitle] = useState("");
+  const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Low");
   const [recurrence, setRecurrence] = useState<
-    'Daily' | 'Weekly' | 'Monthly' | ''
-  >('');
-  const [dependency, setDependency] = useState<number | ''>('');
+    "Daily" | "Weekly" | "Monthly" | ""
+  >("");
+  const [dependency, setDependency] = useState<number | "">("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,57 +21,57 @@ const TaskForm = () => {
       priority,
       recurrence: recurrence || undefined,
       dependency: dependency || undefined,
-      status: 'not done',
+      status: "not done",
     });
-    setTitle('');
-    setRecurrence('');
-    setDependency('');
-    setPriority('Low');
+    setTitle("");
+    setRecurrence("");
+    setDependency("");
+    setPriority("Low");
   };
 
   return (
-    <form onSubmit={handleSubmit} className='bg-gray-100 p-4 rounded-lg mb-4'>
-      <h2 className='text-l font-bold mb-3'>Add Task</h2>
+    <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-lg mb-4">
+      <h2 className="text-l font-bold mb-3">Add Task</h2>
       <input
-        type='text'
-        placeholder='Task title'
+        type="text"
+        placeholder="Task title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className='w-full p-2 border rounded mb-2'
+        className="w-full p-2 border rounded mb-2"
         maxLength={40}
       />
-      <div className='flex gap-2 mb-2'>
+      <div className="flex gap-2 mb-2">
         <select
           value={priority}
           onChange={(e) =>
-            setPriority(e.target.value as 'Low' | 'Medium' | 'High')
+            setPriority(e.target.value as "Low" | "Medium" | "High")
           }
-          className='p-2 border rounded'
+          className="p-2 border rounded"
         >
-          <option value='Low'>Low</option>
-          <option value='Medium'>Medium</option>
-          <option value='High'>High</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
         </select>
         <select
           value={recurrence}
           onChange={(e) =>
-            setRecurrence(e.target.value as 'Daily' | 'Weekly' | 'Monthly' | '')
+            setRecurrence(e.target.value as "Daily" | "Weekly" | "Monthly" | "")
           }
-          className='p-2 border rounded'
+          className="p-2 border rounded"
         >
-          <option value=''>No Recurrence</option>
-          <option value='daily'>Daily</option>
-          <option value='weekly'>Weekly</option>
-          <option value='monthly'>Monthly</option>
+          <option value="">No Recurrence</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
         </select>
         <select
           value={dependency}
           onChange={(e) =>
-            setDependency(e.target.value === '' ? '' : Number(e.target.value))
+            setDependency(e.target.value === "" ? "" : Number(e.target.value))
           }
-          className='w-full p-2 border rounded mb-2'
+          className="p-2 border rounded"
         >
-          <option value=''>No Dependency</option>
+          <option value="">No Dependency</option>
           {tasks.map((task) => (
             <option key={task.id} value={task.id}>
               {task.title}
@@ -79,11 +80,11 @@ const TaskForm = () => {
         </select>
       </div>
       <button
-        type='submit'
+        type="submit"
         disabled={!title}
-        className='bg-black text-white px-4 py-2 rounded cursor-pointer disabled:bg-gray-700 disabled:cursor-auto'
+        className="bg-black text-white px-4 py-2 rounded cursor-pointer disabled:bg-gray-700 disabled:cursor-auto w-40"
       >
-        Add Task
+        {loading ? <LoadingIcon size={30} /> : "Add Task"}
       </button>
     </form>
   );
