@@ -40,13 +40,13 @@ ReactJs
 6.No loading indicators
 7.UI can be improved
 8.No pagination
-10.Commented code blocks
 
 4.Missing API documentation - DONE
 9.No proper code organisation for the backend - DONE
 3.No tests - DONE
 11.Incorrect implementation of delete request API (wrong status code) - DONE
 5.No linting configuration - DONE
+10.Commented code blocks - DONE
 
 
 
