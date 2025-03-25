@@ -32,23 +32,5 @@ ReactJs
 
     Lightweight state management tool as the application is comparatively small and contains a few reusable sateful components.
 
-    
-
-     
-1.Basic error handling only
-2.Missing input validation
-7.UI can be improved
-8.No pagination
-
-4.Missing API documentation - DONE
-9.No proper code organisation for the backend - DONE
-3.No tests - DONE
-11.Incorrect implementation of delete request API (wrong status code) - DONE
-5.No linting configuration - DONE
-10.Commented code blocks - DONE
-6.No loading indicators - DONE
-
-
-
 fix linting using the command - `npm run lint -- --fix`
 

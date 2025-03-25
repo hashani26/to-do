@@ -11,10 +11,15 @@ const TaskForm = () => {
     "Daily" | "Weekly" | "Monthly" | ""
   >("");
   const [dependency, setDependency] = useState<number | "">("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      setError("Title is required");
+      return;
+    }
+    setError("");
 
     addTask({
       title,
@@ -40,6 +45,7 @@ const TaskForm = () => {
         className="w-full p-2 border rounded mb-2"
         maxLength={40}
       />
+      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
       <div className="flex gap-2 mb-2">
         <select
           value={priority}
@@ -81,7 +87,7 @@ const TaskForm = () => {
       </div>
       <button
         type="submit"
-        disabled={!title}
+        // disabled={!title}
         className="bg-black text-white px-4 py-2 rounded cursor-pointer disabled:bg-gray-700 disabled:cursor-auto w-40"
       >
         {loading ? <LoadingIcon size={30} /> : "Add Task"}
