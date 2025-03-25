@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { Task, tasks } from '../models/taskModel';
+import { Request, Response } from "express";
+import { Task, tasks } from "../models/taskModel";
 
 export let idCounter = 1;
 
@@ -12,7 +12,7 @@ export const getTasks = (_req: Request, res: Response) => {
     if (a.status === b.status) {
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     }
-    return a.status === 'not done' ? -1 : 1;
+    return a.status === "not done" ? -1 : 1;
   });
   res.json(sortedTasks);
 };
@@ -20,8 +20,8 @@ export const getTasks = (_req: Request, res: Response) => {
 export const createTask = (req: Request, res: Response) => {
   const {
     title,
-    status = 'not done',
-    priority = 'Medium',
+    status = "not done",
+    priority = "Medium",
     recurrence,
     dependency,
   } = req.body;
@@ -42,17 +42,17 @@ export const createTask = (req: Request, res: Response) => {
 export const deleteTask = (req: Request, res: Response) => {
   const index = tasks.findIndex((t) => t.id === parseInt(req.params.id));
   if (index === -1) {
-    res.status(404).json({ message: 'Task not found' });
+    res.status(404).json({ message: "Task not found" });
     return;
   }
   tasks.splice(index, 1);
-  res.status(204).send()
+  res.status(204).send();
 };
 
 export const updateTask = (req: Request, res: Response) => {
   const task = findTaskById(parseInt(req.params.id));
   if (!task) {
-    res.status(404).json({ message: 'Task not found' });
+    res.status(404).json({ message: "Task not found" });
     return;
   }
 
@@ -66,7 +66,7 @@ export const updateTask = (req: Request, res: Response) => {
   if (status) {
     if (task.dependency) {
       const dependentTask = findTaskById(task.dependency);
-      if (dependentTask && dependentTask.status !== 'done') {
+      if (dependentTask && dependentTask.status !== "done") {
         res
           .status(400)
           .json({ message: `${dependentTask.title} must be completed first.` });
