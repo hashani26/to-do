@@ -33,6 +33,7 @@ const TaskForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className='bg-gray-100 p-4 rounded-lg mb-4'>
+      <h2 className='text-l font-bold mb-3'>Add Task</h2>
       <input
         type='text'
         placeholder='Task title'
