@@ -16,7 +16,6 @@ type TaskState = {
   searchQuery: string;
   priorityFilter: string;
   statusFilter: string;
-  // addTask: (task: Omit<Task, 'id' | 'completed'>) => void;
   addTask: (task: Omit<Task, 'id' | 'completed'>) => Promise<void>;
   updateTask: (id: number) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;

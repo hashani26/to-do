@@ -3,7 +3,6 @@ import { useTaskStore } from '../store/taskStore';
 
 const TaskForm = () => {
   const { addTask, tasks } = useTaskStore();
-  //check add task
 
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>('Low');
@@ -11,8 +10,6 @@ const TaskForm = () => {
     'Daily' | 'Weekly' | 'Monthly' | ''
   >('');
   const [dependency, setDependency] = useState<number | ''>('');
-
-  // const addTask = useTaskStore((state) => state.addTask);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
