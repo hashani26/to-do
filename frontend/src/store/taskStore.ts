@@ -26,6 +26,8 @@ type TaskState = {
   fetchTasks: () => Promise<void>;
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const useTaskStore = create<TaskState>((set) => ({
   tasks: [],
 
@@ -34,7 +36,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   statusFilter: 'All',
   fetchTasks: async () => {
     try {
-      const response = await fetch('http://localhost:3001/tasks', {
+      const response = await fetch(`${API_URL}/tasks`, {
         headers: { 'Content-Type': 'application/json' },
       });
       if (!response.ok) throw new Error('Failed to fetch tasks');
@@ -47,7 +49,7 @@ export const useTaskStore = create<TaskState>((set) => ({
 
   addTask: async (task) => {
     try {
-      const response = await fetch('http://localhost:3001/tasks', {
+      const response = await fetch(`${API_URL}/tasks`, {
         headers: { 'Content-Type': 'application/json' },
         method: 'POST',
         body: JSON.stringify({ ...task }),
@@ -64,7 +66,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   },
   updateTask: async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/tasks/${id}`, {
+      const response = await fetch(`${API_URL}/tasks/${id}`, {
         headers: { 'Content-Type': 'application/json' },
         method: 'PUT',
         body: JSON.stringify({ id, status: 'done' }),
@@ -89,7 +91,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   },
   deleteTask: async (id) => {
     try {
-      const response = await fetch(`http://localhost:3001/tasks/${id}`, {
+      const response = await fetch(`${API_URL}/tasks/${id}`, {
         headers: { 'Content-Type': 'application/json' },
         method: 'DELETE',
       });
