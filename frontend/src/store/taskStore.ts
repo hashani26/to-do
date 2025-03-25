@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { toast } from "react-hot-toast";
 
 //move to a single file to access both fe and be
 export type Task = {
@@ -103,6 +104,7 @@ export const useTaskStore = create<TaskState>((set) => ({
 
       if (!response.ok) throw new Error("Failed to delete task");
       set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }));
+      toast.success("Task deleted successfully!");
     } catch (error) {
       console.error("Error deleting task", error);
     }
