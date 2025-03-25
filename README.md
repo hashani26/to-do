@@ -37,7 +37,6 @@ ReactJs
      
 1.Basic error handling only
 2.Missing input validation
-6.No loading indicators
 7.UI can be improved
 8.No pagination
 
@@ -47,6 +46,7 @@ ReactJs
 11.Incorrect implementation of delete request API (wrong status code) - DONE
 5.No linting configuration - DONE
 10.Commented code blocks - DONE
+6.No loading indicators - DONE
 
 
 
