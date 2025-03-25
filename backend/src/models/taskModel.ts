@@ -8,5 +8,4 @@ export type Task = {
   };
   
   export let tasks: Task[] = [];
-  export let idCounter = 1;
   

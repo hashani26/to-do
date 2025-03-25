@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
-import { Task, tasks, idCounter } from '../models/taskModel';
+import { Task, tasks } from '../models/taskModel';
+
+export let idCounter = 1;
 
 const findTaskById = (id: number): Task | undefined =>
   tasks.find((t) => t.id === id);
@@ -16,10 +18,16 @@ export const getTasks = (_req: Request, res: Response) => {
 };
 
 export const createTask = (req: Request, res: Response) => {
-  const { title, status = 'not done', priority = 'Medium', recurrence, dependency } = req.body;
+  const {
+    title,
+    status = 'not done',
+    priority = 'Medium',
+    recurrence,
+    dependency,
+  } = req.body;
 
   const newTask: Task = {
-    id: idCounter+1,
+    id: idCounter++,
     title,
     status,
     priority,
@@ -34,16 +42,18 @@ export const createTask = (req: Request, res: Response) => {
 export const deleteTask = (req: Request, res: Response) => {
   const index = tasks.findIndex((t) => t.id === parseInt(req.params.id));
   if (index === -1) {
-    return res.status(404).json({ message: 'Task not found' });
+    res.status(404).json({ message: 'Task not found' });
+    return;
   }
   tasks.splice(index, 1);
-  res.json({ message: 'Task deleted successfully' });
+  res.status(204).send()
 };
 
 export const updateTask = (req: Request, res: Response) => {
   const task = findTaskById(parseInt(req.params.id));
   if (!task) {
-    return res.status(404).json({ message: 'Task not found' });
+    res.status(404).json({ message: 'Task not found' });
+    return;
   }
 
   const { title, status, priority, recurrence, dependency } = req.body;
@@ -57,7 +67,10 @@ export const updateTask = (req: Request, res: Response) => {
     if (task.dependency) {
       const dependentTask = findTaskById(task.dependency);
       if (dependentTask && dependentTask.status !== 'done') {
-        return res.status(400).json({ message: `${dependentTask.title} must be completed first.` });
+        res
+          .status(400)
+          .json({ message: `${dependentTask.title} must be completed first.` });
+        return;
       }
     }
     task.status = status;

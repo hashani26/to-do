@@ -2,9 +2,8 @@
   "name": "to-do",
   "version": "1.0.0",
   "description": "task list with status and priorities",
-  "type": "module",
   "scripts": {
-    "build": "tsc --build ",
+    "build": "tsc --build",
     "start": "node dist/index.js",
     "dev": "nodemon ./src/index",
     "test": "jest"
