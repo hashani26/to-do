@@ -3,7 +3,7 @@ import globals from "globals";
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import jest from "eslint-plugin-jest";
-// import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default defineConfig([
   { ignores: ["dist/", "node_modules"] },
@@ -27,5 +27,5 @@ export default defineConfig([
       "jest/prefer-expext-assertions": "off",
     },
   },
-  // eslintPluginPrettierRecommended,
+  eslintPluginPrettierRecommended,
 ]);
