@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Task, tasks } from "../models/taskModel";
 
-export let idCounter = 1;
+export let idCounter = 0;
 
 const findTaskById = (id: number): Task | undefined =>
   tasks.find((t) => t.id === id);
