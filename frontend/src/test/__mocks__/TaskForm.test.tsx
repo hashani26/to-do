@@ -27,7 +27,7 @@ describe("TaskForm Component", () => {
   test("renders input fields and button", () => {
     render(<TaskForm />);
     expect(screen.getByPlaceholderText("Task title")).toBeInTheDocument();
-    expect(screen.getByText("Add Task")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Add Task/i })).toBeInTheDocument();
   });
 
   test("adds a task when form is submitted", () => {
@@ -35,7 +35,7 @@ describe("TaskForm Component", () => {
     const titleInput = screen.getByPlaceholderText(
       "Task title"
     ) as HTMLInputElement;
-    const addButton = screen.getByText("Add Task");
+    const addButton = screen.getByRole("button", { name: /Add Task/i })
 
     fireEvent.change(titleInput, { target: { value: "New Task" } });
     fireEvent.click(addButton);
@@ -51,7 +51,7 @@ describe("TaskForm Component", () => {
 
   test("does not add a task if title is empty", () => {
     render(<TaskForm />);
-    const addButton = screen.getByText("Add Task");
+    const addButton = screen.getByRole("button", { name: /Add Task/i })
     fireEvent.click(addButton);
 
     expect(mockAddTask).not.toHaveBeenCalled();
