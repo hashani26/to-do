@@ -17,6 +17,7 @@ type TaskState = {
   searchQuery: string;
   priorityFilter: string;
   statusFilter: string;
+  sort: string;
   loading: boolean;
   addTask: (task: Omit<Task, "id" | "completed">) => Promise<void>;
   updateTask: (id: number) => Promise<void>;
@@ -24,6 +25,7 @@ type TaskState = {
   setSearchQuery: (query: string) => void;
   setPriorityFilter: (priority: string) => void;
   setStatusFilter: (status: string) => void;
+  setSort: (status: string) => void;
   fetchTasks: () => Promise<void>;
 };
 
@@ -35,6 +37,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   searchQuery: "",
   priorityFilter: "All",
   statusFilter: "All",
+  sort: "All",
   fetchTasks: async () => {
     try {
       const response = await fetch(`${API_URL}/tasks`, {
@@ -112,4 +115,5 @@ export const useTaskStore = create<TaskState>((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setPriorityFilter: (priority) => set({ priorityFilter: priority }),
   setStatusFilter: (status) => set({ statusFilter: status }),
+  setSort: (status) => set({ sort: status }),
 }));
