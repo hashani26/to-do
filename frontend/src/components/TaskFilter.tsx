@@ -6,10 +6,9 @@ const TaskFilters = () => {
     priorityFilter,
     statusFilter,
     setSearchQuery,
-    setPriorityFilter,
-    setStatusFilter,
     setSort,
     sort,
+    fetchTasks,
   } = useTaskStore();
 
   return (
@@ -26,7 +25,7 @@ const TaskFilters = () => {
       {/* Priority Filter */}
       <select
         value={priorityFilter}
-        onChange={(e) => setPriorityFilter(e.target.value)}
+        onChange={(e) => fetchTasks(e.target.value, statusFilter)}
         className="p-2 border rounded"
       >
         <option value="All">All Priorities</option>
@@ -38,7 +37,7 @@ const TaskFilters = () => {
       {/* Status Filter */}
       <select
         value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
+        onChange={(e) => fetchTasks(priorityFilter, e.target.value)}
         className="p-2 border rounded"
       >
         <option value="All">All Status</option>
