@@ -7,14 +7,48 @@ const findTaskById = (id: number): Task | undefined =>
   tasks.find((t) => t.id === id);
 
 export const getTasks = (_req: Request, res: Response) => {
-  const priorityOrder = { Low: 1, Medium: 2, High: 3 };
-  const sortedTasks = [...tasks].sort((a, b) => {
-    if (a.status === b.status) {
-      return priorityOrder[b.priority] - priorityOrder[a.priority];
-    }
-    return a.status === "not done" ? -1 : 1;
-  });
-  res.json(sortedTasks);
+  const { priority, status } = _req.query;
+
+  let filteredTasks = tasks;
+  if (priority && status) {
+    filteredTasks = tasks.filter(
+      (task) =>
+        task.priority.toLocaleLowerCase() ===
+          String(priority).trim().toLowerCase() &&
+        task.status.toLocaleLowerCase() === String(status).trim().toLowerCase(),
+    );
+  } else if (priority) {
+    filteredTasks = tasks.filter(
+      (task) =>
+        task.priority.toLocaleLowerCase() ===
+        String(priority).trim().toLowerCase(),
+    );
+  } else if (status) {
+    filteredTasks = tasks.filter(
+      (task) =>
+        task.status.toLocaleLowerCase() === String(status).trim().toLowerCase(),
+    );
+  }
+  res.json(filteredTasks);
+};
+
+export const searchTask = (req: Request, res: Response) => {
+  const { title } = req.query;
+  if (!title) {
+    res.status(400).json({ message: "Title query parameter is required" });
+    return;
+  }
+
+  const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(String(title).trim().toLowerCase()),
+  );
+
+  if (filteredTasks.length === 0) {
+    res.status(404).json({ message: "No tasks found" });
+    return;
+  }
+
+  res.json(filteredTasks);
 };
 
 export const createTask = (req: Request, res: Response) => {

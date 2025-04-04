@@ -7,9 +7,13 @@
 6. open a browser window and go to `http://localhost:5173/` to access the UI
 7. recommended coding editor - VSCode
 
-# Workspace Settings
+# Source Code Management and Workspace Settings
 
-Project specific settings are overriden in .vscode/settings.json. The configuration is set to enforce eslint and prettier recommended linting and code formatting on file save.
+Project specific settings are overriden in .vscode/settings.json. The configuration is set to enforce eslint and prettier recommended linting and code formatting on file save. eslint config will be enforced via .vscode/settings.json in order to keep the code consistency across the team on every commit to the origin repository.
+
+Two different eslint configuration files are maintained in frontend and backend folders to avoid conflicts with different plugins needed by different frameworks and libraries.
+
+
 
 # UI Design
 

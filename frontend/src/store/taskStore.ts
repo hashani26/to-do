@@ -23,10 +23,8 @@ export type TaskState = {
   updateTask: (id: number) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;
   setSearchQuery: (query: string) => void;
-  setPriorityFilter: (priority: string) => void;
-  setStatusFilter: (status: string) => void;
   setSort: (status: string) => void;
-  fetchTasks: () => Promise<void>;
+  fetchTasks: (priority?: string, status?: string) => Promise<void>;
 };
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -38,14 +36,22 @@ export const useTaskStore = create<TaskState>((set) => ({
   priorityFilter: "All",
   statusFilter: "All",
   sort: "All",
-  fetchTasks: async () => {
+  fetchTasks: async (priority, status) => {
+    console.log("🚀 ~ fetchTasks: , status:", status);
     try {
-      const response = await fetch(`${API_URL}/tasks`, {
+      const params = new URLSearchParams();
+      if (priority && priority !== "All") params.set("priority", priority);
+      if (status && status !== "All") params.set("status", status);
+
+      const queryString = params.toString() ? `?${params.toString()}` : "";
+
+      console.log("🚀 ~ fetchTasks: ~ queryString:", queryString);
+      const response = await fetch(`${API_URL}/tasks${queryString}`, {
         headers: { "Content-Type": "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch tasks");
       const data: Task[] = await response.json();
-      set({ tasks: data });
+      set({ tasks: data, priorityFilter: priority, statusFilter: status });
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -113,7 +119,5 @@ export const useTaskStore = create<TaskState>((set) => ({
     }
   },
   setSearchQuery: (query) => set({ searchQuery: query }),
-  setPriorityFilter: (priority) => set({ priorityFilter: priority }),
-  setStatusFilter: (status) => set({ statusFilter: status }),
   setSort: (status) => set({ sort: status }),
 }));

@@ -3,40 +3,18 @@ import TaskItem from "./TaskItem";
 import { useEffect } from "react";
 import LoadingIcon from "./LoadingIcon";
 const TaskList = () => {
-  const {
-    tasks,
-    searchQuery,
-    priorityFilter,
-    statusFilter,
-    fetchTasks,
-    loading,
-    sort,
-  } = useTaskStore();
+  const { tasks, fetchTasks, loading, sort } = useTaskStore();
 
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
 
   function renderTasks() {
-    const filteredTasks = tasks.filter((task) => {
-      const matchesSearch = task.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const matchesPriority =
-        priorityFilter === "All" || task.priority === priorityFilter;
-      const matchesStatus =
-        statusFilter === "All" ||
-        (statusFilter === "done" && task.status === "done") ||
-        (statusFilter === "not done" && task.status === "not done");
-
-      return matchesSearch && matchesPriority && matchesStatus;
-    });
-
     if (sort !== "All") {
       const priorityOrder = { Low: 1, Medium: 2, High: 3 };
       const statusOrder = { done: 1, "not done": 2 };
 
-      const sortedTasks = [...filteredTasks].sort((a, b): number => {
+      const sortedTasks = [...tasks].sort((a, b): number => {
         if (sort === "pAsc") {
           return priorityOrder[a.priority] - priorityOrder[b.priority];
         } else if (sort === "pDsc") {
@@ -45,12 +23,13 @@ const TaskList = () => {
           return statusOrder[a.status] - statusOrder[b.status];
         } else if (sort === "sDsc") {
           return statusOrder[b.status] - statusOrder[a.status];
+        } else {
+          return 0;
         }
-        return 1;
       });
       return sortedTasks;
     } else {
-      return filteredTasks;
+      return tasks;
     }
   }
 
