@@ -22,7 +22,7 @@ export type TaskState = {
   addTask: (task: Omit<Task, "id" | "completed">) => Promise<void>;
   updateTask: (id: number) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;
-  setSearchQuery: (query: string) => void;
+  setSearchQuery: (query: string) => Promise<void>;
   setSort: (status: string) => void;
   fetchTasks: (priority?: string, status?: string) => Promise<void>;
 };
@@ -37,7 +37,6 @@ export const useTaskStore = create<TaskState>((set) => ({
   statusFilter: "All",
   sort: "All",
   fetchTasks: async (priority, status) => {
-    console.log("🚀 ~ fetchTasks: , status:", status);
     try {
       const params = new URLSearchParams();
       if (priority && priority !== "All") params.set("priority", priority);
@@ -45,13 +44,17 @@ export const useTaskStore = create<TaskState>((set) => ({
 
       const queryString = params.toString() ? `?${params.toString()}` : "";
 
-      console.log("🚀 ~ fetchTasks: ~ queryString:", queryString);
       const response = await fetch(`${API_URL}/tasks${queryString}`, {
         headers: { "Content-Type": "application/json" },
       });
       if (!response.ok) throw new Error("Failed to fetch tasks");
       const data: Task[] = await response.json();
-      set({ tasks: data, priorityFilter: priority, statusFilter: status });
+      set((state) => ({
+        tasks: data,
+        priorityFilter: priority,
+        statusFilter: status,
+        searchQuery: state.searchQuery,
+      }));
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -118,6 +121,32 @@ export const useTaskStore = create<TaskState>((set) => ({
       console.error("Error deleting task", error);
     }
   },
-  setSearchQuery: (query) => set({ searchQuery: query }),
+  setSearchQuery: async (query) => {
+    try {
+      if (!query.trim()) {
+        set({ searchQuery: "" });
+        await useTaskStore
+          .getState()
+          .fetchTasks(
+            useTaskStore.getState().priorityFilter,
+            useTaskStore.getState().statusFilter,
+          );
+        return;
+      }
+
+      const params = new URLSearchParams();
+      if (query) params.set("title", query);
+      const response = await fetch(
+        `${API_URL}/tasks/search?${params.toString()}`,
+      );
+      if (!response.ok) {
+        throw new Error("failed to search tasks");
+      }
+      const data: Task[] = await response.json();
+      set({ searchQuery: query, tasks: data });
+    } catch (error) {
+      console.error("Error searching tasks", error);
+    }
+  },
   setSort: (status) => set({ sort: status }),
 }));
