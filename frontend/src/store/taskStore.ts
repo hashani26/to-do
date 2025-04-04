@@ -12,7 +12,7 @@ export type Task = {
   dependency?: number;
 };
 
-type TaskState = {
+export type TaskState = {
   tasks: Task[];
   searchQuery: string;
   priorityFilter: string;
@@ -91,7 +91,7 @@ export const useTaskStore = create<TaskState>((set) => ({
 
       set((state) => ({
         tasks: state.tasks.map((t) =>
-          t.id === id ? { ...t, status: data.status } : t
+          t.id === id ? { ...t, status: data.status } : t,
         ),
       }));
     } catch (error) {

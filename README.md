@@ -5,6 +5,11 @@
 4. open a separate terminal
 5. run commands `cd frontend`, `npm i`, `npm run dev`
 6. open a browser window and go to `http://localhost:5173/` to access the UI
+7. recommended coding editor - VSCode
+
+# Workspace Settings
+
+Project specific settings are overriden in .vscode/settings.json. The configuration is set to enforce eslint and prettier recommended linting and code formatting on file save.
 
 # UI Design
 

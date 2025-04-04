@@ -1,8 +1,16 @@
 import { useTaskStore } from "../store/taskStore";
 
 const TaskFilters = () => {
-  const { searchQuery, priorityFilter, statusFilter, setSearchQuery, setPriorityFilter, setStatusFilter, setSort, sort } =
-    useTaskStore();
+  const {
+    searchQuery,
+    priorityFilter,
+    statusFilter,
+    setSearchQuery,
+    setPriorityFilter,
+    setStatusFilter,
+    setSort,
+    sort,
+  } = useTaskStore();
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 bg-gray-100 p-4 rounded-lg mb-4">
@@ -16,7 +24,11 @@ const TaskFilters = () => {
       />
 
       {/* Priority Filter */}
-      <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} className="p-2 border rounded">
+      <select
+        value={priorityFilter}
+        onChange={(e) => setPriorityFilter(e.target.value)}
+        className="p-2 border rounded"
+      >
         <option value="All">All Priorities</option>
         <option value="High">High</option>
         <option value="Medium">Medium</option>
@@ -24,12 +36,20 @@ const TaskFilters = () => {
       </select>
 
       {/* Status Filter */}
-      <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="p-2 border rounded">
+      <select
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+        className="p-2 border rounded"
+      >
         <option value="All">All Status</option>
         <option value="done">Done</option>
         <option value="not done">Pending</option>
       </select>
-      <select value={sort} onChange={(e) => setSort(e.target.value)} className="p-2 border rounded">
+      <select
+        value={sort}
+        onChange={(e) => setSort(e.target.value)}
+        className="p-2 border rounded"
+      >
         <option value="All">Default</option>
         <option value="pAsc">Priority Ascending</option>
         <option value="pDsc">Priority Decending</option>
