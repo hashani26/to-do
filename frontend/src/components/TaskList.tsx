@@ -10,7 +10,7 @@ const TaskList = () => {
     statusFilter,
     fetchTasks,
     loading,
-    sort
+    sort,
   } = useTaskStore();
 
   useEffect(() => {
@@ -18,7 +18,6 @@ const TaskList = () => {
   }, [fetchTasks]);
 
   function renderTasks() {
-
     const filteredTasks = tasks.filter((task) => {
       const matchesSearch = task.title
         .toLowerCase()
@@ -29,29 +28,29 @@ const TaskList = () => {
         statusFilter === "All" ||
         (statusFilter === "done" && task.status === "done") ||
         (statusFilter === "not done" && task.status === "not done");
-  
+
       return matchesSearch && matchesPriority && matchesStatus;
     });
-  
-    if(sort !== "All"){
+
+    if (sort !== "All") {
       const priorityOrder = { Low: 1, Medium: 2, High: 3 };
-      const statusOrder = { 'done': 1, 'not done': 2 };
-    
+      const statusOrder = { done: 1, "not done": 2 };
+
       const sortedTasks = [...filteredTasks].sort((a, b): number => {
-        if(sort === 'pAsc'){
+        if (sort === "pAsc") {
           return priorityOrder[a.priority] - priorityOrder[b.priority];
-        }else if(sort === 'pDsc'){
+        } else if (sort === "pDsc") {
           return priorityOrder[b.priority] - priorityOrder[a.priority];
-        }else if(sort === 'sAsc'){
+        } else if (sort === "sAsc") {
           return statusOrder[a.status] - statusOrder[b.status];
-        }else if(sort === 'sDsc'){
+        } else if (sort === "sDsc") {
           return statusOrder[b.status] - statusOrder[a.status];
         }
-        return 1
+        return 1;
       });
-      return sortedTasks
-    }else{
-      return filteredTasks
+      return sortedTasks;
+    } else {
+      return filteredTasks;
     }
   }
 
