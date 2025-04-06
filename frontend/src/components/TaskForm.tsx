@@ -10,7 +10,7 @@ const TaskForm = () => {
   const [recurrence, setRecurrence] = useState<
     "Daily" | "Weekly" | "Monthly" | ""
   >("");
-  const [dependency, setDependency] = useState<number | "">("");
+  const [dependency, setDependency] = useState<number | undefined>(undefined);
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,16 +24,16 @@ const TaskForm = () => {
     addTask({
       title,
       priority,
-      recurrence: recurrence || undefined,
-      dependency: dependency || undefined,
+      recurrence: recurrence ? recurrence : undefined,
+      dependency: dependency !== undefined ? dependency : undefined,
       status: "not done",
     });
     setTitle("");
     setRecurrence("");
-    setDependency("");
+    setDependency(-1);
     setPriority("Low");
   };
-
+  console.log("undefined", dependency);
   return (
     <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-lg mb-4">
       <h2 className="text-l font-bold mb-3">Add Task</h2>
@@ -73,11 +73,15 @@ const TaskForm = () => {
         <select
           value={dependency}
           onChange={(e) =>
-            setDependency(e.target.value === "" ? "" : Number(e.target.value))
+            setDependency(
+              e.target.value === undefined ? undefined : Number(e.target.value),
+            )
           }
           className="p-2 border rounded"
         >
-          <option value="">No Dependency</option>
+          <option key={-1} value={-1}>
+            No Dependency
+          </option>
           {tasks.map((task) => (
             <option key={task.id} value={task.id}>
               {task.title}
