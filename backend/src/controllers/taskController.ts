@@ -95,10 +95,10 @@ export const updateTask = (req: Request, res: Response) => {
   if (title) task.title = title;
   if (priority) task.priority = priority;
   if (recurrence) task.recurrence = recurrence;
-  if (dependency) task.dependency = dependency;
+  if (dependency !== undefined) task.dependency = dependency;
 
   if (status) {
-    if (task.dependency) {
+    if (task.dependency !== undefined) {
       const dependentTask = findTaskById(task.dependency);
       if (dependentTask && dependentTask.status !== "done") {
         res
