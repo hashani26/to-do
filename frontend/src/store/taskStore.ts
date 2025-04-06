@@ -92,7 +92,7 @@ export const useTaskStore = create<TaskState>((set) => ({
       if (!response.ok) {
         if (response.status === 400) {
           const errorMsg = await response.json();
-          alert(errorMsg.message);
+          toast.error(errorMsg.message);
         }
         throw new Error("Failed to update task");
       }
