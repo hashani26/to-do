@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { toast } from "react-hot-toast";
-
+import { limit } from "../utils";
 //move to a single file to access both fe and be
 export type Task = {
   id: number;
@@ -19,12 +19,18 @@ export type TaskState = {
   statusFilter: string;
   sort: string;
   loading: boolean;
+  offset: number;
   addTask: (task: Omit<Task, "id" | "completed">) => Promise<void>;
   updateTask: (id: number) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;
   setSearchQuery: (query: string) => Promise<void>;
   setSort: (status: string) => void;
-  fetchTasks: (priority?: string, status?: string) => Promise<void>;
+  fetchTasks: (
+    offset: number,
+    priority?: string,
+    status?: string,
+  ) => Promise<void>;
+  setOffset: (offset: number) => void;
 };
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -36,11 +42,14 @@ export const useTaskStore = create<TaskState>((set) => ({
   priorityFilter: "All",
   statusFilter: "All",
   sort: "All",
-  fetchTasks: async (priority, status) => {
+  offset: 0,
+  fetchTasks: async (offset, priority, status) => {
     try {
       const params = new URLSearchParams();
       if (priority && priority !== "All") params.set("priority", priority);
       if (status && status !== "All") params.set("status", status);
+      if (offset !== undefined) params.set("offset", String(offset));
+      params.set("limit", String(limit));
 
       const queryString = params.toString() ? `?${params.toString()}` : "";
 
@@ -69,16 +78,15 @@ export const useTaskStore = create<TaskState>((set) => ({
         body: JSON.stringify({ ...task }),
       });
       if (!response.ok) throw new Error("Failed to create task");
-      const data: Task = await response.json();
 
-      setTimeout(() => {
-        set((state) => ({
-          tasks: [...state.tasks, { ...data }],
-          loading: false,
-        }));
-      }, 500);
+      const { priorityFilter, statusFilter, offset } = useTaskStore.getState();
+
+      await useTaskStore
+        .getState()
+        .fetchTasks(offset, priorityFilter, statusFilter);
     } catch (error) {
       console.error("Error creating tasks:", error);
+    } finally {
       set({ loading: false });
     }
   },
@@ -115,7 +123,12 @@ export const useTaskStore = create<TaskState>((set) => ({
       });
 
       if (!response.ok) throw new Error("Failed to delete task");
-      set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }));
+      const { priorityFilter, statusFilter, offset } = useTaskStore.getState();
+
+      await useTaskStore
+        .getState()
+        .fetchTasks(offset, priorityFilter, statusFilter);
+
       toast.success("Task deleted successfully!");
     } catch (error) {
       console.error("Error deleting task", error);
@@ -128,6 +141,7 @@ export const useTaskStore = create<TaskState>((set) => ({
         await useTaskStore
           .getState()
           .fetchTasks(
+            useTaskStore.getState().offset,
             useTaskStore.getState().priorityFilter,
             useTaskStore.getState().statusFilter,
           );
@@ -149,4 +163,5 @@ export const useTaskStore = create<TaskState>((set) => ({
     }
   },
   setSort: (status) => set({ sort: status }),
+  setOffset: (offset) => set({ offset }),
 }));

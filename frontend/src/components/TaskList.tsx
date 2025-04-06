@@ -2,12 +2,22 @@ import { useTaskStore } from "../store/taskStore";
 import TaskItem from "./TaskItem";
 import { useEffect } from "react";
 import LoadingIcon from "./LoadingIcon";
+import { limit } from "../utils";
 const TaskList = () => {
-  const { tasks, fetchTasks, loading, sort } = useTaskStore();
+  const { tasks, fetchTasks, loading, sort, offset, setOffset } =
+    useTaskStore();
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    fetchTasks(offset, undefined, undefined);
+  }, [fetchTasks, offset]);
+
+  function handleNextPage() {
+    setOffset(offset + 1);
+  }
+
+  function handlePreviousPage() {
+    setOffset(offset !== 0 ? offset - 1 : 0);
+  }
 
   function renderTasks() {
     if (sort !== "All") {
@@ -43,6 +53,22 @@ const TaskList = () => {
       ) : (
         renderTasks().map((task) => <TaskItem key={task.id} task={task} />)
       )}
+      <div className="flex justify-between mt-4">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          onClick={handlePreviousPage}
+          disabled={offset === 0 || loading}
+        >
+          Previous
+        </button>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          onClick={handleNextPage}
+          disabled={tasks.length < limit || loading}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
