@@ -7,7 +7,13 @@ const findTaskById = (id: number): Task | undefined =>
   tasks.find((t) => t.id === id);
 
 export const getTasks = (_req: Request, res: Response) => {
-  const { priority, status } = _req.query;
+  const { priority, status, limit, offset } = _req.query;
+  if (!limit || !offset) {
+    res.status(400).json({ message: "Either limit or offset is not provided" });
+    return;
+  }
+  const limitNum = limit ? parseInt(String(limit)) : 2;
+  const offsetNum = offset ? parseInt(String(offset)) : 0;
 
   let filteredTasks = tasks;
   if (priority && status) {
@@ -28,6 +34,11 @@ export const getTasks = (_req: Request, res: Response) => {
       (task) =>
         task.status.toLocaleLowerCase() === String(status).trim().toLowerCase(),
     );
+  }
+  if (offsetNum !== undefined && limitNum !== undefined) {
+    const start = offsetNum * limitNum; // Start index for slicing
+    const end = start + limitNum; // End index for slicing
+    filteredTasks = filteredTasks.slice(start, end);
   }
   res.json(filteredTasks);
 };
