@@ -1,1 +1,1 @@
-export const limit = 2;
+export const limit = 8;
